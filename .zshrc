@@ -1,3 +1,7 @@
+if [ -f "$HOME/.amazonrc" ]; then
+  source "$HOME/.amazonrc"
+fi
+
 # Prezto
 if [[ -s "${ZDOTDIR:-$HOME}/.zprezto/init.zsh" ]]; then
   source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
@@ -40,7 +44,3 @@ eval "$(rbenv init -)"
 
 # Start X at log in for my desktop
 [[ `hostname -s` = "ThinkingMachine" && -z $DISPLAY && $XDG_VTNR -eq 1 ]] && exec startx
-
-if [ -f "$HOME/.amazonrc" ]; then
-  source "$HOME/.amazonrc"
-fi
