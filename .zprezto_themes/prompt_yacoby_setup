@@ -18,7 +18,7 @@ function prompt_yacoby_git_info {
     if [[ -s "$_prompt_yacoby_precmd_async_data" ]]; then
       alias typeset='typeset -g'
       source "$_prompt_yacoby_precmd_async_data"
-      RPROMPT+='${git_info:+${(e)git_info[status]}} [%D{%H:%M:%S}]'
+      PROMPT='$(build_prompt)'
       unalias typeset
     fi
 
@@ -49,11 +49,15 @@ function prompt_yacoby_precmd {
   prompt_yacoby_pwd
 
   # Define prompts.
-  RPROMPT=''
+  PROMPT=''
 
   # Kill the old process of slow commands if it is still running.
   if (( _prompt_yacoby_precmd_async_pid > 0 )); then
     kill -KILL "$_prompt_yacoby_precmd_async_pid" &>/dev/null
+  fi
+
+  if (( $+functions[python-info] )); then
+    python-info
   fi
 
   # Compute slow commands in the background.
@@ -63,15 +67,21 @@ function prompt_yacoby_precmd {
 }
 
 function build_prompt {
-  echo -n '
-%{%F{blue}%}%n%{%F{white}%}@%{%F{green}%}%M %{%F{grey}%}'
-
-  echo "$_prompt_yacoby_pwd"
-
   prefix="$"
   if [[ "$(whoami)" == "root" ]]; then
     prefix="#"
   fi
+  echo ''
+  echo -n "$prefix "
+  echo -n '%{%F{cyan}%}%n%{%F{white}%}@%{%F{green}%}%M %{%F{grey}%}'
+  echo -n "$_prompt_yacoby_pwd"
+  if (( $+functions[git-info] )); then
+    if git-info; then
+      echo -n " (${git_info:+${(e)git_info[status]}})"
+    fi
+  fi
+  echo -n "$python_info[virtualenv]"
+  echo ''
   echo "$prefix "
 }
 
@@ -97,7 +107,7 @@ function prompt_yacoby_setup {
   zstyle ':prezto:module:git:info:added' format ' %%B%F{2}✚%f%%b'
   zstyle ':prezto:module:git:info:ahead' format ' %%B%F{13}⬆%f%%b'
   zstyle ':prezto:module:git:info:behind' format ' %%B%F{13}⬇%f%%b'
-  zstyle ':prezto:module:git:info:branch' format ' %%B%F{2}%b%f%%b'
+  zstyle ':prezto:module:git:info:branch' format '%%B%F{2}%b%f%%b'
   zstyle ':prezto:module:git:info:commit' format ' %%B%F{3}%.7c%f%%b'
   zstyle ':prezto:module:git:info:deleted' format ' %%B%F{1}✖%f%%b'
   zstyle ':prezto:module:git:info:modified' format ' %%B%F{4}✱%f%%b'
@@ -109,9 +119,12 @@ function prompt_yacoby_setup {
   zstyle ':prezto:module:git:info:keys' format \
     'status' '$(coalesce "%b" "%p" "%c")%s%A%B%S%a%d%m%r%U%u'
 
+  zstyle ':prezto:module:python:info:virtualenv' format ' (%v)'
+
+
   # Define prompts.
   PROMPT='$(build_prompt)'
-  RPROMPT=''
+  RPROMPT='[%D{%H:%M:%S}]'
   SPROMPT='zsh: correct %F{1}%R%f to %F{2}%r%f [nyae]? '
 }
 
