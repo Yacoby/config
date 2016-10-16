@@ -1,0 +1,1 @@
+/home/yacoby/config/vim/.vimrc
