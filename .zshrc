@@ -39,6 +39,7 @@ setopt NO_FLOW_CONTROL
 export PATH=$HOME/bin/:$PATH
 
 alias be='bundle exec'
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 eval "$(rbenv init -)"
 
