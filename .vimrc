@@ -1,9 +1,25 @@
-" required for pathogen
-filetype off
-call pathogen#infect()
+let data_dir = has('nvim') ? stdpath('data') . '/site' : '~/.vim'
+if empty(glob(data_dir . '/autoload/plug.vim'))
+  silent execute '!curl -fLo '.data_dir.'/autoload/plug.vim --create-dirs  https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+  autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
+endif
+
+call plug#begin()
+
+Plug 'tpope/vim-obsession'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'preservim/nerdtree'
+Plug 'morhetz/gruvbox'
+Plug 'dense-analysis/ale'
+
+call plug#end()
+
+
 filetype on
 
 filetype plugin indent on " filetype detection, filetype specific scripts, ft indent scripts
+set background=dark
+colorscheme gruvbox
 
 syntax on
 set smartindent
@@ -34,6 +50,10 @@ set hidden "?
 set backspace=indent,eol,start
 set laststatus=2 " always show the status line
 set undofile " allow infinate list undo
+
+set backupdir=/tmp// " The // means that the directory information will be saved in the filename
+set directory=/tmp//
+set undodir=/tmp//
 
 " search settings
 set ignorecase
@@ -69,10 +89,6 @@ if has("unix")
   endif
 endif
 
-" enable 256 colours
-set t_Co=256
-set background=dark
-colorscheme solarized
 
 set wildmenu "wildmenu, better autocomplete of commands
 set wildmode=list:longest
@@ -94,21 +110,7 @@ let NERDTreeIgnore = ['\.pyc$']
 nmap <silent> <C-D> :NERDTreeToggle<CR>
 
 "Ctrl P
-set runtimepath^=~/.vim/bundle/ctrlp.vim
 nnoremap <leader>t :CtrlP<CR>
-
-" autoindent
-let g:indent_guides_auto_colors = 0
-autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd  ctermbg=235
-autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=236
-let g:indent_guides_guide_size = 1
-let g:indent_guides_start_level = 2
-let g:indent_guides_enable_on_vim_startup = 1
-
-" syntastic
-let g:syntastic_javascript_checkers=['jshint', 'jslint']
-let g:syntastic_ruby_checkers=['mri', 'rubocop']
-let g:syntastic_python_checkers=['python', 'pyflakes', 'flake8']
 
 " remap arrow keys to move around slips
 nnoremap <silent> <Right> <c-w>l
