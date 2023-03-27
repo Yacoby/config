@@ -6,20 +6,25 @@ if [[ ! -d $ZPLUGINDIR/zsh_unplugged ]]; then
 fi
 source $ZPLUGINDIR/zsh_unplugged/zsh_unplugged.zsh
 
-if [ -f "$HOME/.localrc" ]; then
-  source "$HOME/.localrc"
-fi
+HISTSIZE=100000
+SAVEHIST=100000
 
-# Kill ctrl-s as much as possible
-setopt NO_FLOW_CONTROL
+setopt NO_FLOW_CONTROL # Kill ctrl-s as much as possible
+
+# Share history between terminals immediately
+setopt INC_APPEND_HISTORY
+setopt SHARE_HISTORY
+
+setopt HIST_SAVE_NO_DUPS # Don't write duplicate entries in the history file.
+setopt HIST_REDUCE_BLANKS # Remove superfluous blanks before recording entry.
 
 autoload -Uz compinit
-if [ $(date +'%j') != $(stat -f '%Sm' -t '%j' ~/.zcompdump) ]; then
+for dump in ~/.zcompdump(N.mh+24); do
   compinit
-else
-  compinit -C
-fi
+done
+compinit -C
 
+###################### Plugins ######################
 repos=(
   sindresorhus/pure
 
@@ -29,6 +34,8 @@ repos=(
   zsh-users/zsh-history-substring-search
   zsh-users/zsh-autosuggestions
 
+  qoomon/zsh-lazyload
+
   # All plugins loaded after this are deferred
   romkatv/zsh-defer
 
@@ -37,6 +44,10 @@ repos=(
 
 plugin-load $repos
 
-####
-# Alias
+###################### Alias ######################
 alias config_git='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+
+###################### Local ######################
+if [ -f "$HOME/.localrc" ]; then
+  source "$HOME/.localrc"
+fi
