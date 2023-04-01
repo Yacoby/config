@@ -39,6 +39,8 @@ repos=(
   # All plugins loaded after this are deferred
   romkatv/zsh-defer
 
+  davidparsson/zsh-pyenv-lazy
+
   lukechilds/zsh-better-npm-completion
 )
 
